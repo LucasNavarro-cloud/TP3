@@ -47,6 +47,8 @@ def main_process():
     df = format_data(df)
     export_data(df)
 
+def remove_data(df: pd.DataFrame, last_n_samples: int = 4*3):
+    return df.iloc[:-last_n_samples]
 
 if __name__ == "__main__":
 

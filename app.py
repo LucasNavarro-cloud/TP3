@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 from src.fetch_data import load_data_from_lag_to_today
 from src.process_data import col_date, col_donnees, main_process, fic_export_data
 import logging
@@ -31,7 +30,13 @@ def load_data(lag_days: int):
 
 df = load_data(LAG_N_DAYS)
 
-st.subheader("Total Consumption Per Week")
+st.subheader("Total Consumption for Last Week")
 
-weekly_consumption = df.resample('W-Mon', on=col_date)[col_donnees].sum()
-st.write(weekly_consumption)
+# Filter the dataframe to keep only the data for the last week
+last_week_start = df[col_date].max() - pd.Timedelta(days=6)
+last_week_data = df[df[col_date] >= last_week_start]
+
+# Calculate the total consumption for the last week
+total_consumption_last_week = last_week_data[col_donnees].sum()
+
+st.write(f"Total consumption for last week: {total_consumption_last_week}")

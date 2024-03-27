@@ -1,17 +1,11 @@
-
 import streamlit as st
 import pandas as pd
 from src.fetch_data import load_data_from_lag_to_today
-from src.process_data import col_date, col_donnees, main_process, fic_export_data
-import logging
+from src.process_data import col_date, col_donnees, main_process, fic_export_data, remove_data
 import os
 import glob
 
-def remove_data(df: pd.DataFrame, last_n_samples: int = 4*3):
-
-    # df: pd.DataFrame = pd.read_csv(fic_export_data)
-    return df.iloc[:-last_n_samples]
-    # df.to_csv(fic_export_data, index=False)
+import logging
 
 logging.basicConfig(level=logging.INFO)
 
@@ -36,7 +30,12 @@ def load_data(lag_days: int):
     return data
 
 df = load_data(LAG_N_DAYS)
-df = remove_data(df, last_n_samples=4*24)
+
+# Get the original number of rows
+original_rows = len(df)
+
+# Remove data
+df, removed_rows = remove_data(df, last_n_samples=4*3)
 
 st.subheader("Total Consumption for Last Week")
 
@@ -48,3 +47,5 @@ last_week_data = df[df[col_date] >= last_week_start]
 total_consumption_last_week = last_week_data[col_donnees].sum()
 
 st.write(f"Total consumption for last week: {total_consumption_last_week}")
+st.write(f"Number of rows removed: {removed_rows}")
+st.write(f"Original number of rows: {original_rows}")

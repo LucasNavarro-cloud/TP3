@@ -1,3 +1,4 @@
+"""
 import streamlit as st
 import pandas as pd
 from src.fetch_data import load_data_from_lag_to_today
@@ -40,3 +41,27 @@ last_week_data = df[df[col_date] >= last_week_start]
 total_consumption_last_week = last_week_data[col_donnees].sum()
 
 st.write(f"Total consumption for last week: {total_consumption_last_week}")
+"""
+
+def main_process():
+    df: pd.DataFrame = load_data()
+    df = format_data(df)
+    df = load_data()
+    df = format_data(df)
+   
+    # Calculer la consommation hebdomadaire
+    total = calculate_total(df)
+    export_data(df)
+   
+    # Afficher le total de la consommation hebdomadaire
+    calculate_and_display_total(df)
+ 
+def calculate_total(df: pd.DataFrame):
+    # Agréger les données par semaine et calculer le total de la consommation
+    total_consumption = df.resample('W-Mon').sum()
+    return total_consumption
+ 
+def calculate_and_display_total(df: pd.DataFrame):
+    total = calculate_total(df)
+    print("Consommation totale de la semaine :")
+    print(total)
